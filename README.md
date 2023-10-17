@@ -20,10 +20,6 @@ My full second analysis can be found in the ['final_notebook-Factors That Lead t
 
 of course perfect model isn't possible. umpire bias, catcher framing, randomness.
 
-make table of models precision and recall scores and whether undersampled
-
-make table of coefficients
-
 # First Analysis Summary
 
 I used pitch-level data from the 2023 MLB season through August 14 downloaded from Statcast. Only pitches that resulted in a called strike or called ball with no ancillary event were used (i.e. no foul balls, swinging strikes, balls put in play, caught stealing). I wanted to isolate events that were solely affected by the home plate umpire's call. To determine whether an umpire missed the call, I used Statcast's "zone". If Statcast determined that the pitch was outside of the strike zone but the umpire called it a strike, that was a false called strike, whereas a pitch inside the strike zone but called a ball was a false called ball.
@@ -59,23 +55,6 @@ I considered including strike zone height in my model as well, but it was fairly
 
 I also created a variable makeup_call_potential, which returned 1 if there was false called ball earlier in the at bat else 0. I wanted to see if there was evidence that the umpire would make up for a false called ball with a false called strike. I did not see significant evidence in my exploratory analysis, and there was also the issue of imbalanced cases (a pitch with a false called ball earlier in at bat was rare). Thus, I ultimately excluded it from the model.
 
-<figure>
-    <p align="center">
-    <img src="illustrations/daily_retail_sales.jpg"
-         alt="Content vs Collab"
-         >
-    </p>
-</figure>
-
-<figure>
-    <p align="center">
-    <img src="illustrations/daily_ws_sales.jpg"
-         alt="Content vs Collab"
-         >
-    </p>
-</figure>
-
-
 # Modeling
 
 The dependent variable is binary, 0 if true ball 1 if false called strike. About 9.5% of pitches were false called strikes, meaning an imbalanced dataset. I attempted to rectify this two separate ways: the first through corrective class weightings in the models and the second through an under sampled train dataset.
@@ -88,56 +67,55 @@ I one-hot-encoded three variables, outs_when_up (how manys outs there were in th
 
 I ran two decision tree models, one with the full original train set (and class_weight = 'balanced' parameter), and one with an under sampled train set to account for class imbalance.
 
-Next, after standard scaling the numeric variables, I ran a logistic regression with the full original train set (and class_weight = 'balanced' parameter). I extracted the coefficients and converted them into interpretable odds (sorted in descending order):
+Next, after standard-scaling the numeric variables, I ran a logistic regression with the full original train set (and class_weight = 'balanced' parameter).
 
-<img width="217" alt="image" src="https://github.com/jnahra/Factors-that-Lead-to-Incorrectly-Called-Strikes/assets/122231470/9f8e26a3-6e20-4fdc-8d30-6794ac256a0c">
+I also created a pipeline that standard-scaled and ran a logistic regression model on the under-sampled data for comparison.
 
-I also created a pipeline that standard scaled and ran a logistic regression model on the under sampled data for comparison.
-
-The third model type I ran was a random forest. I used only the under sampled data due to its long training time.
+The third model type I ran was a random forest. I used only the under-sampled data due to its long training time.
 
 Fourth, I ran a neural network model on the full train data with early stopping criteria if recall did not improve after 10 epochs.
 
-Finally, I tried a simple XGBoost model on the under sampled data.
+Finally, I tried a simple XGBoost model on the under-sampled data.
+
+# Evaluation
+
+I extracted the logistic regression coefficients using the full train set and converted them into interpretable odds (sorted in descending order):
+
+<img width="217" alt="image" src="https://github.com/jnahra/Factors-that-Lead-to-Incorrectly-Called-Strikes/assets/122231470/9f8e26a3-6e20-4fdc-8d30-6794ac256a0c">
+
+For numeric variables such as euclid_dist, the interpretation is that a 1-standard deviation increase in the euclidean distance of a pitch outside the strike zone is associated with a 97% reduction in the likelihood of that pitch being a false called strike.
+
+For categorical variables such as high_or_low_pitch, the interpretation is that a high or low pitch is 65% less likely to be a false called strike than an inside or outside pitch.
 
 Here are the test precision and recall scores for each model, sorted by F-1 score:
 
 <img width="530" alt="image" src="https://github.com/jnahra/Factors-that-Lead-to-Incorrectly-Called-Strikes/assets/122231470/3d83c5d8-303d-496e-bae2-d2e2feb58e15">
 
+You can see most of the models were fairly similar in terms of precision, recall, and F-1 scores.
+
 I left the threshold at 0.5 for the logistic regression model as I felt it was an acceptable balance of precision and recall (given my focus on recall), but I did look at precision-recall curve to observe the area under the curve and other combinations of precision and recall at different thresholds, including what threshold would maximize the F1-score. I looked at train/test precision and recall for different max depths for decision trees/random forests and looked at F1 scores for different batch sizes for the neural network model.
 
-# Evaluation
+<img width="618" alt="image" src="https://github.com/jnahra/Factors-that-Lead-to-Incorrectly-Called-Strikes/assets/122231470/ddb22b6c-439f-4215-8c5f-69595977189e">
 
-Now that I have determined the best time series model, the real test: Is my sales forecast model better than current orders? In order to make that comparison, I attempt to compare apples to apples. Orders are placed five times per week, so I manipulate my daily sales forecast to match the form of the orders. As per the store manager, I assume any order over 54 packages of pita will be known ahead of time, and thus I add in those orders to my model as if I had predicted them with 100% accuracy.
-
-This may be overly generous, as it does not appear that the storefront always orders as if they knew large orders were coming. However, strangely the sales are still made on those days. More digging may be required on this front. Fortunately, it's likely not only one-sided, as there are also likely smaller orders known ahead of time by the store front that my model is forecasting.
-
-Indeed, one data limitation is that I don't know how many/which sales are known ahead of time, which would be useful in determining what I need to model and in comparing my model to current orders. But we can only go off what we know.
-
-A comparison between my model and current orders on the test set showed my model represented a substantial improvement. My model was off on average by 42 packages of pita daily versus 75 packages of pita for current orders.
-
-<figure>
-    <p align="center">
-    <img src="illustrations/total_sales_vs_orders.jpg"
-         alt="Content vs Collab"
-         >
-    </p>
-</figure>
-
-<figure>
-    <p align="center">
-    <img src="illustrations/total_sales_vs_predicted_sales.jpg"
-         alt="Content vs Collab"
-         >
-    </p>
-</figure>
+You can see the trade-off between precision and recall. The threshold with the highest F-1 score has a recall score of 52% and a precision score of 43%.
 
 # Recommendations & Future Insights
 
-My model prediction represents a data-driven improvement over current orders and can be deployed immediately for the rest of 2023. Large sales for both retail and wholesale can be added in as they become known.
+Through this analysis, I learned some significant factors that lead to incorrectly called strikes. My models were fairly good at identifying instances of false called strikes. They were certainly not perfect, but that is to be expected. There are many factors outside the scope of this analysis that lead to incorrectly called strikes, including individual umpire strike zone bias, catcher framing, and simple randomness (an umpire could have blinked!). In a future analysis, I could look into potentially gathering umpire and catcher IDs to see if those factors make a difference. But at the end of the day, any model trying to predict false called strikes won't be fool-proof. I could also expand the analysis by trying to predict false called balls versus true strikes. There I suspect catcher framing/where the catcher is set up could play a larger role.
 
-This model is ready to go and can help right now, but what can be done in the future to continue helping the bakery and improving this model? First, we can expand the model to other bread types. It is likely that my model can improve ordering for other bread types as well. Second, we can keep tracking our model’s performance for a larger test set (both the simple and advanced models). We can also periodically retrain the model as we get more data. Lastly, we can look into determining whether over-ordering (selling discounted bread and discarding old bread) or under-ordering (missing out on potential sales) is more costly for the business. This can inform how we assess the model's performance.
+As a current hitter in a Sunday men's league, I will leave some advice for MLB hitters based on the logistic regression odds table.
 
-I am proud to be able to help the business my grandfather started over 50 years ago using tools I learned a few months ago. Hopefully the first project of many!
+1. If you're tall, you need to stay cognizant about the potential for false called strikes on high and low pitches. If the pitch is high or low, a 1-standard deviation increase in height is associated with a 97% greater likelihood of a false called strike.
+2. False called strikes are much more likely when hitters are ahead in the count than behind. A 1-standard deviation increase in woba (about .100) is associated with a 42% greater likelihood of a false called strike. For some reference, the woba for a 3-0 count is about 100 points higher than that for a 3-1 count.
+3. Don't rely on the umpire when the bases are loaded, swing if it's close. False called strikes are 35% more likely when the bases are loaded versus other on-base combinations (excluding nobody on, which is 12% more likely than the other category).
+4. In the second half of the game, expand your zone slightly. Maybe because the umpire is getting dialed into seeing pitches from hard-throwing relievers with wicked breaking balls, or because it's getting dark, but false called strikes are 10% more likely in the 5th inning or later versus the first 4 innings.
+5. If your team is up or down by 4 runs or more, expand your zone slightly. False called strikes are 7% more likely when the score isn't as close.
+6. If the pitcher is/was an all-star, prepare for them to get the benefit of the doubt. All-star pitchers are 4% more likely to get false called strikes.
+7. Putting your time in pays off. If you're a veteran, you can better afford to wait for your pitch. For every 1-standard deviation increase in days since your MLB debut, you're 1.4% less likely to face a false called strike.
+8. Hey now, you're an all-star! If you are or have been an all-star yourself, congratulations! You're 8% less likely to have a false called strike against you.
+9. If it's fast, let is pass. But if it's slow, you may not be able to just let it go. For every 1-standard deviation increase in effective speed, the pitch is 15% less likely to be a false called strike.
+10. Fellow lefties rejoice! Left-handed hitters are 18% less likely to have a false called strike than right-handed hitters.
+11. As mentioned, protect the corners. Inside and outside pitchers are more likely to be false called strikes. High and low pitches are 65% less likely to be false called strikes.
+12. Finally, and most obviously, the worry of a false called strike fades as the pitch is farther and farther outside the zone. For every 1-standard deviation increase in euclidean distance outside the strike zone, the pitch is 98% less likely to be a false called strike.
 
-Thanks for reading!
+Thanks for reading and happy hitting!
