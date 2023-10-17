@@ -18,8 +18,6 @@ The pre-Tableau portion of the first analysis can be found in ['Tableau prep-MLB
 
 My full second analysis can be found in the ['final_notebook-Factors That Lead to Incorrectly Called Strikes'](https://github.com/jnahra/Factors-that-Lead-to-Incorrectly-Called-Strikes/blob/main/final_notebook-Factors%20That%20Lead%20to%20Incorrectly%20Called%20Strikes.ipynb).
 
-of course perfect model isn't possible. umpire bias, catcher framing, randomness.
-
 # First Analysis Summary
 
 I used pitch-level data from the 2023 MLB season through August 14 downloaded from Statcast. Only pitches that resulted in a called strike or called ball with no ancillary event were used (i.e. no foul balls, swinging strikes, balls put in play, caught stealing). I wanted to isolate events that were solely affected by the home plate umpire's call. To determine whether an umpire missed the call, I used Statcast's "zone". If Statcast determined that the pitch was outside of the strike zone but the umpire called it a strike, that was a false called strike, whereas a pitch inside the strike zone but called a ball was a false called ball.
