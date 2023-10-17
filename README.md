@@ -39,6 +39,10 @@ I tried many different variables, different iterations of the same variable, and
 3. **high_or_low_pitch:** 1 if the pitch is high or low (outside of the strike zone) else 0. It appears that umpires are much more likely to make a false called strike on a pitch outside of the zone horizontally than a pitch outside of the zone vertically.
 4. **woba_by_count:** the average 2023 MLB woba for each count. Rather than have 12 one-hot-encoded categorical variables, I decided to use woba as a proxy for hitter's count. In this way, it turns count into a pseudo-numeric variable that has perhaps more accurate distances between the categories (i.e. the difference between 0-1 and 0-2 is different than the difference between 3-0 and 3-1). The thinking is that umpires are more apt to help pitchers when they are behind in the count and less apt to help pitchers when they are ahead in the count. Woba effectively captures hitter's counts by reflecting how well hitters do in each count.
 5. **effective_speed:** the perceived velocity of the pitch, based on velocity and extension. Based on the relationship, it appears that slower pitches are more likely to be false called strikes, probably because a slower pitch implies a pitch with more spin/movement, which may be harder for an umpire to track where it crossed the plate than a straight faster pitch.
+
+<img width="466" alt="image" src="https://github.com/jnahra/Factors-that-Lead-to-Incorrectly-Called-Strikes/assets/122231470/199379c2-7658-45d6-9eb5-ec1be438c49b">
+
+
 6. **bats:** whether the batter is batting left-handed or right-handed. It appears that umpires are more biased against right-handed hitters with respect to false called strikes.
 7. **on_base_bins:** three categories of runners on base. Includes bases loaded, nobody on, and other as the reference. Umps may be more lax with nobody on, and may be hesitant to hurt the pitcher by walking in a run with the bases loaded.
 8. **alt_inning_bins:** 1 if inning is 5th or later else 0. The thinking for the split being that relief pitchers usually come into the game in the 5th inning or later, and for night games it tends to be dark in the second half of games.
@@ -47,9 +51,15 @@ I tried many different variables, different iterations of the same variable, and
 11. **batter_allstar:** 1 if batter has ever been an all-star else 0. The thinking being that a good hitter may get more favorable calls (i.e. fewer false called strikes).
 12. **time_since_debut:** number of days since batter played first MLB game. The thinking being that a longer-tenured hitter may get more respect and favorable calls (i.e. fewer false called strikes).
 
+<img width="466" alt="image" src="https://github.com/jnahra/Factors-that-Lead-to-Incorrectly-Called-Strikes/assets/122231470/921a36d9-ef89-4291-9b53-3a0adc818a66">
+
+
 A few notable variable omissions:
 
 I considered including strike zone height in my model as well, but it was fairly correlated with height, and I was more interested in looking at the effect of height on false called strikes. Height is a common, easy-to-interpret fact about a player whereas a player's strike zone height is not very well-known and can actually change pitch to pitch. Moreover, players with the same height can have different strike zone heights due to differences in their batting stance. In theory, umpires should be looking at a player's strike zone (where the letters of their jersey and their knees are) but in reality they may have some implicit bias of seeing the height of the player coming to bat.
+
+<img width="383" alt="image" src="https://github.com/jnahra/Factors-that-Lead-to-Incorrectly-Called-Strikes/assets/122231470/a74ac499-aa30-4410-8584-23fc94829dde">
+
 
 I also created a variable makeup_call_potential, which returned 1 if there was false called ball earlier in the at bat else 0. I wanted to see if there was evidence that the umpire would make up for a false called ball with a false called strike. I did not see significant evidence in my exploratory analysis, and there was also the issue of imbalanced cases (a pitch with a false called ball earlier in at bat was rare). Thus, I ultimately excluded it from the model.
 
