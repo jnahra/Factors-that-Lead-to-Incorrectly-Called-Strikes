@@ -59,7 +59,7 @@ The dependent variable is binary, 0 if true ball 1 if false called strike. About
 
 In each model, I was focused primarily on recall (correctly identifying most false called strikes), but I ran grid searches to optimize for F-1 Score, as I wanted some focus on precision (i.e. not too many false positives) as well so that my models weren't simply predicting all pitches to be false called strikes.
 
-After filtering, I had 128,148 pitch data points, 10,2518 in the train set and 25,630 in the test set (80-20 split).
+After filtering, I had 128,148 pitch data points, 102,518 in the train set and 25,630 in the test set (80-20 split).
 
 I one-hot-encoded three variables, outs_when_up (how manys outs there were in the inning), bats, and on_base_bins.
 
