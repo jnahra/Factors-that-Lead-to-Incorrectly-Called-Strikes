@@ -88,7 +88,7 @@ I one-hot-encoded three variables, outs_when_up (how manys outs there were in th
 
 I ran two decision tree models, one with the full original train set (and class_weight = 'balanced' parameter), and one with an under sampled train set to account for class imbalance.
 
-Next, after standard scaling the numeric variables, I ran a logistic regression with the full original train set (and class_weight = 'balanced' parameter). I extracted the coefficients and converted them into interpretable odds:
+Next, after standard scaling the numeric variables, I ran a logistic regression with the full original train set (and class_weight = 'balanced' parameter). I extracted the coefficients and converted them into interpretable odds (sorted in descending order):
 
 <img width="217" alt="image" src="https://github.com/jnahra/Factors-that-Lead-to-Incorrectly-Called-Strikes/assets/122231470/9f8e26a3-6e20-4fdc-8d30-6794ac256a0c">
 
@@ -100,7 +100,7 @@ Fourth, I ran a neural network model on the full train data with early stopping 
 
 Finally, I tried a simple XGBoost model on the under sampled data.
 
-Here are the test precision and recall scores for each model:
+Here are the test precision and recall scores for each model, sorted by F-1 score:
 
 <img width="530" alt="image" src="https://github.com/jnahra/Factors-that-Lead-to-Incorrectly-Called-Strikes/assets/122231470/3d83c5d8-303d-496e-bae2-d2e2feb58e15">
 
