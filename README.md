@@ -55,7 +55,7 @@ I also created a variable makeup_call_potential, which returned 1 if there was f
 
 # Modeling
 
-The dependent variable is binary, 0 if true ball 1 if false called strike. About 9.5% of pitches were false called strikes, meaning an imbalanced dataset. I attempted to rectify this two separate ways: the first through corrective class weightings in the models and the second through an under sampled train dataset.
+The dependent variable is binary, 0 if true ball 1 if false called strike. About 9.5% of pitches were false called strikes, meaning an imbalanced dataset. I attempted to rectify this two separate ways: the first through corrective class weightings in the models and the second through an under-sampled train dataset.
 
 In each model, I was focused primarily on recall (correctly identifying most false called strikes), but I ran grid searches to optimize for F-1 Score, as I wanted some focus on precision (i.e. not too many false positives) as well so that my models weren't simply predicting all pitches to be false called strikes.
 
@@ -63,7 +63,7 @@ After filtering, I had 128,148 pitch data points, 10,2518 in the train set and 2
 
 I one-hot-encoded three variables, outs_when_up (how manys outs there were in the inning), bats, and on_base_bins.
 
-I ran two decision tree models, one with the full original train set (and class_weight = 'balanced' parameter), and one with an under sampled train set to account for class imbalance.
+I ran two decision tree models, one with the full original train set (and class_weight = 'balanced' parameter), and one with an under-sampled train set to account for class imbalance.
 
 Next, after standard-scaling the numeric variables, I ran a logistic regression with the full original train set (and class_weight = 'balanced' parameter).
 
