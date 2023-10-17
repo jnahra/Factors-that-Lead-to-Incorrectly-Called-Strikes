@@ -88,7 +88,9 @@ I one-hot-encoded three variables, outs_when_up (how manys outs there were in th
 
 I ran two decision tree models, one with the full original train set (and class_weight = 'balanced' parameter), and one with an under sampled train set to account for class imbalance.
 
-Next, after standard scaling the numeric variables, I ran a logistic regression with the full original train set (and class_weight = 'balanced' parameter). I extracted the coefficients and converted them into interpretable odds. 
+Next, after standard scaling the numeric variables, I ran a logistic regression with the full original train set (and class_weight = 'balanced' parameter). I extracted the coefficients and converted them into interpretable odds:
+
+<img width="217" alt="image" src="https://github.com/jnahra/Factors-that-Lead-to-Incorrectly-Called-Strikes/assets/122231470/9f8e26a3-6e20-4fdc-8d30-6794ac256a0c">
 
 I also created a pipeline that standard scaled and ran a logistic regression model on the under sampled data for comparison.
 
@@ -102,53 +104,7 @@ Here are the test precision and recall scores for each model:
 
 <img width="530" alt="image" src="https://github.com/jnahra/Factors-that-Lead-to-Incorrectly-Called-Strikes/assets/122231470/3d83c5d8-303d-496e-bae2-d2e2feb58e15">
 
-
 I left the threshold at 0.5 for the logistic regression model as I felt it was an acceptable balance of precision and recall (given my focus on recall), but I did look at precision-recall curve to observe the area under the curve and other combinations of precision and recall at different thresholds, including what threshold would maximize the F1-score. I looked at train/test precision and recall for different max depths for decision trees/random forests and looked at F1 scores for different batch sizes for the neural network model.
-
-
-Looking at my data, I noticed there was both weekly and annual seasonality. Holidays also have a significant impact on sales. Sometimes because of the effects they have consumer behavior, other times because the bakery isn't open!
-
-I found a time series model created by Facebook called Prophet, which allows for easy incorporation of multiple seasonalities, holidays, and additional regressors. It also has a visual breakdown of how much variability in the overall series can be accounted for by the trend, seasonalities, holidays, and additional regressors.
-
-I ran two models each for retail sales and wholesale sales. The first model included weekly and annual seasonality as well as holidays. For holidays, I used all major U.S. public holidays as well as Ramadan, a Muslim holiday that includes a month of fasting (not great for pita bread sales!). The second model added the Guardians' day home game attendance and Cleveland weather conditions such as maximum temperature, precipitation, and snowfall.
-
-The time series model required two years of training data for annual seasonality purposes, so my train set was January 2021-January 2023 and my test set was January 2023-March 2023. The small test size represents a limitation in my model evaluation.
-
-<figure>
-    <p align="center">
-    <img src="illustrations/retail_sales_vs_predictions_test.jpg"
-         alt="Content vs Collab"
-         >
-    </p>
-</figure>
-
-<figure>
-    <p align="center">
-    <img src="illustrations/ws_sales_vs_predictions_test.jpg"
-         alt="Content vs Collab"
-         >
-    </p>
-</figure>
-
-Ultimately, the first model without regressors performed the best for both retail and wholesale sales. There may have been a very slight improvement adding the regressors, but I deemed the additional complexity of the model not worth the minimal improvement. A simpler model that does not require daily weather inputs is also more feasible for real-world model deployment. I can simply give the store manager my complete 2023 forecast, which he can put into action without any additional ongoing work required.
-
-After selecting my model, I re-trained the model with all the data (train and test set) for retail and wholesale sales. I then replaced any negative predictions with zero before adding retail and wholesale sales together for my final forecast of total daily pita bread sales for transactions equal to or below 54 packages of pita. The store manager can add in large orders as they become known.
-
-<figure>
-    <p align="center">
-    <img src="illustrations/retail_sales_forecast.jpg"
-         alt="Content vs Collab"
-         >
-    </p>
-</figure>
-
-<figure>
-    <p align="center">
-    <img src="illustrations/ws_sales_forecast.jpg"
-         alt="Content vs Collab"
-         >
-    </p>
-</figure>
 
 # Evaluation
 
