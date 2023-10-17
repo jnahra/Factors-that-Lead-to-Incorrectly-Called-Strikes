@@ -65,9 +65,7 @@ I one-hot-encoded three variables, outs_when_up (how manys outs there were in th
 
 I ran two decision tree models, one with the full original train set (and class_weight = 'balanced' parameter), and one with an under-sampled train set to account for class imbalance.
 
-Next, after standard-scaling the numeric variables, I ran a logistic regression with the full original train set (and class_weight = 'balanced' parameter).
-
-I also created a pipeline that standard-scaled and ran a logistic regression model on the under-sampled data for comparison.
+Next, after standard-scaling the numeric variables, I ran a logistic regression with the full original train set (and class_weight = 'balanced' parameter). I also created a pipeline that standard-scaled and ran a logistic regression model on the under-sampled data for comparison.
 
 The third model type I ran was a random forest. I used only the under-sampled data due to its long training time.
 
