@@ -89,7 +89,7 @@ Here are the test precision and recall scores for each model, sorted by F-1 scor
 
 You can see most of the models were fairly similar in terms of precision, recall, and F-1 scores.
 
-I left the threshold at 0.5 for the logistic regression model as I felt it was an acceptable balance of precision and recall (given my focus on recall), but I did look at precision-recall curve to observe the area under the curve and other combinations of precision and recall at different thresholds, including what threshold would maximize the F1-score. I looked at train/test precision and recall for different max depths for decision trees/random forests and looked at F1 scores for different batch sizes for the neural network model.
+I left the threshold at 0.5 for the logistic regression model as I felt it was an acceptable balance of precision and recall (given my focus on recall), but I did look at a precision-recall curve to observe the area under the curve and other combinations of precision and recall at different thresholds, including what threshold would maximize the F1-score. I looked at train/test precision and recall for different max depths for decision trees/random forests and looked at F1 scores for different batch sizes for the neural network model.
 
 <img width="618" alt="image" src="https://github.com/jnahra/Factors-that-Lead-to-Incorrectly-Called-Strikes/assets/122231470/ddb22b6c-439f-4215-8c5f-69595977189e">
 
